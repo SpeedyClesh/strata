@@ -1,0 +1,139 @@
+// Strata — Prisma schema
+// PostgreSQL. Simulation data only.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum CardBrand {
+  VISA
+  MASTERCARD
+}
+
+enum NotificationKind {
+  INFO
+  BALANCE
+  SECURITY
+  SUPPORT
+}
+
+enum SupportStatus {
+  OPEN
+  RESOLVED
+}
+
+enum SenderRole {
+  USER
+  ADMIN
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+
+  accounts       Account[]
+  notifications  Notification[]
+  supportThreads SupportThread[]
+}
+
+model Account {
+  id            String   @id @default(cuid())
+  userId        String
+  accountNumber String   @unique
+  balance       Decimal  @default(0)
+  currency      String   @default("USD")
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  outgoingTransactions Transaction[] @relation("FromAccount")
+  incomingTransactions Transaction[] @relation("ToAccount")
+  cards                Card[]
+}
+
+model Transaction {
+  id            String   @id @default(cuid())
+  fromAccountId String
+  toAccountId   String?
+  amount        Decimal
+  description   String
+  createdAt     DateTime @default(now())
+
+  fromAccount Account  @relation("FromAccount", fields: [fromAccountId], references: [id], onDelete: Cascade)
+  toAccount   Account? @relation("ToAccount", fields: [toAccountId], references: [id], onDelete: SetNull)
+
+  @@index([fromAccountId])
+  @@index([toAccountId])
+}
+
+model Card {
+  id         String    @id @default(cuid())
+  accountId  String
+  brand      CardBrand @default(VISA)
+  last4      String
+  numberFull String
+  expMonth   Int
+  expYear    Int
+  cvv        String
+  frozen     Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  kind      NotificationKind @default(INFO)
+  title     String
+  body      String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+}
+
+model SupportThread {
+  id        String        @id @default(cuid())
+  userId    String
+  subject   String
+  status    SupportStatus @default(OPEN)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages SupportMessage[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model SupportMessage {
+  id         String     @id @default(cuid())
+  threadId   String
+  senderRole SenderRole
+  body       String
+  createdAt  DateTime   @default(now())
+
+  thread SupportThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  @@index([threadId])
+}
