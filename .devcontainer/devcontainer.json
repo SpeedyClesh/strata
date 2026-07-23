@@ -1,0 +1,9 @@
+{
+  "name": "Strata",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "features": {
+    "ghcr.io/itsmechlark/features/postgresql:1": { "version": "16" }
+  },
+  "forwardPorts": [3000, 5432],
+  "postCreateCommand": "bash .devcontainer/setup.sh"
+}
