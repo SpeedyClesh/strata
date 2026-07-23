@@ -108,8 +108,8 @@ export default async function AdminUserDetailPage({ params }: { params: { userId
                           <span>
                             {c.brand} •••• {c.last4} — exp {String(c.expMonth).padStart(2, "0")}/{String(c.expYear).slice(-2)}
                           </span>
-                          <span className={c.frozen ? "text-amber-600" : "text-muted-foreground"}>
-                            {c.frozen ? "Frozen" : "Active"}
+                          <span className={c.status === "FROZEN" ? "text-amber-600" : c.status === "PENDING" ? "text-strata-amber-deep" : "text-muted-foreground"}>
+                            {c.status}
                           </span>
                         </div>
                       ))}

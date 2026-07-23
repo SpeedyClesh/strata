@@ -34,7 +34,7 @@ export async function POST(request: Request, { params }: { params: { userId: str
     const { via } = await sendEmail({
       to: user.email,
       subject: `Strata: ${title}`,
-      text: `Hi ${user.name},\n\n${text}\n\n— Strata (simulated)\n`,
+      text: `Hi ${user.name},\n\n${text}\n\n— Strata\n`,
     });
     emailVia = via;
   }

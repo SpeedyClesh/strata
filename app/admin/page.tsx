@@ -75,7 +75,7 @@ export default async function AdminOverviewPage() {
         <Card className="mt-6">
           <CardHeader>
             <CardTitle>Recent activity</CardTitle>
-            <CardDescription>Latest transactions across all simulated accounts.</CardDescription>
+            <CardDescription>Latest transactions across all customer accounts.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="divide-y divide-border">

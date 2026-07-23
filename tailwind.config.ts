@@ -12,12 +12,13 @@ const config: Config = {
       center: true,
       padding: "1.5rem",
       screens: {
-        "2xl": "1280px",
+        "2xl": "1320px",
       },
     },
     extend: {
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        serif: ["var(--font-playfair)", "Georgia", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -54,8 +55,12 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))",
         },
         strata: {
-          navy: "hsl(var(--strata-navy))",
-          mint: "hsl(var(--strata-mint))",
+          green: "hsl(var(--strata-green))",
+          "green-deep": "hsl(var(--strata-green-deep))",
+          "green-soft": "hsl(var(--strata-green-soft))",
+          amber: "hsl(var(--strata-amber))",
+          "amber-deep": "hsl(var(--strata-amber-deep))",
+          "amber-soft": "hsl(var(--strata-amber-soft))",
         },
       },
       borderRadius: {
@@ -65,6 +70,7 @@ const config: Config = {
       },
       boxShadow: {
         soft: "0 2px 8px -2px rgb(0 0 0 / 0.06), 0 8px 24px -4px rgb(0 0 0 / 0.08)",
+        card: "0 4px 12px -4px rgb(0 0 0 / 0.05), 0 12px 30px -8px rgb(0 0 0 / 0.08)",
       },
       keyframes: {
         "accordion-down": {

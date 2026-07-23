@@ -10,11 +10,21 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { formatCurrency } from "@/lib/utils";
 
-export function TransferForm({ currentBalance, currency }: { currentBalance: number; currency: string }) {
+export function TransferForm({
+  currentBalance,
+  currency,
+  recipientLabel = "Recipient account number",
+  method = "Transfer",
+}: {
+  currentBalance: number;
+  currency: string;
+  recipientLabel?: string;
+  method?: string;
+}) {
   const router = useRouter();
   const { toast } = useToast();
 
-  const [recipientAccountNumber, setRecipientAccountNumber] = React.useState("");
+  const [recipient, setRecipient] = React.useState("");
   const [amount, setAmount] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
@@ -39,7 +49,12 @@ export function TransferForm({ currentBalance, currency }: { currentBalance: num
       const res = await fetch("/api/transfer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ recipientAccountNumber, amount: numericAmount, description }),
+        body: JSON.stringify({
+          recipientAccountNumber: recipient,
+          amount: numericAmount,
+          description: description || method,
+          method,
+        }),
       });
       const data = await res.json();
 
@@ -50,11 +65,8 @@ export function TransferForm({ currentBalance, currency }: { currentBalance: num
       }
 
       toast({
-        title: "Transfer complete",
-        description:
-          data.type === "internal"
-            ? `${formatCurrency(numericAmount, currency)} sent to account ending in ${recipientAccountNumber.slice(-4)}.`
-            : `${formatCurrency(numericAmount, currency)} sent as an external transfer.`,
+        title: "Transfer initiated",
+        description: `${formatCurrency(numericAmount, currency)} — ${method}.`,
       });
 
       router.push("/dashboard");
@@ -68,18 +80,14 @@ export function TransferForm({ currentBalance, currency }: { currentBalance: num
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="recipient">Recipient account number</Label>
+        <Label htmlFor="recipient">{recipientLabel}</Label>
         <Input
           id="recipient"
           required
-          inputMode="numeric"
-          placeholder="10-digit account number"
-          value={recipientAccountNumber}
-          onChange={(e) => setRecipientAccountNumber(e.target.value)}
+          placeholder={recipientLabel}
+          value={recipient}
+          onChange={(e) => setRecipient(e.target.value)}
         />
-        <p className="text-xs text-muted-foreground">
-          Matches a seeded demo account? It&apos;s treated as an internal transfer. Otherwise it&apos;s simulated as external.
-        </p>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -118,9 +126,9 @@ export function TransferForm({ currentBalance, currency }: { currentBalance: num
         </div>
       )}
 
-      <Button type="submit" size="lg" disabled={submitting} className="gap-2">
+      <Button type="submit" size="lg" disabled={submitting} className="gap-2 bg-strata-green hover:bg-strata-green-deep">
         <Send className="h-4 w-4" />
-        {submitting ? "Sending…" : "Send transfer"}
+        {submitting ? "Sending…" : `Send ${method}`}
       </Button>
     </form>
   );

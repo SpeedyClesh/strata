@@ -35,7 +35,7 @@ export default async function AdminUsersPage() {
         <Card>
           <CardHeader>
             <CardTitle>All customers</CardTitle>
-            <CardDescription>{users.length} simulated customer accounts.</CardDescription>
+            <CardDescription>{users.length} customer accounts.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>

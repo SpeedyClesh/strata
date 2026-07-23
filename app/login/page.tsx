@@ -35,7 +35,7 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      setError("Invalid email or password. Try the demo credentials below.");
+      setError("Invalid email or password. Please try again.");
       setLoading(false);
       return;
     }
@@ -67,7 +67,7 @@ export default function LoginPage() {
           <Card className="order-2 md:order-1">
             <CardHeader>
               <CardTitle>Log in</CardTitle>
-              <CardDescription>Access your simulated Strata account.</CardDescription>
+              <CardDescription>Sign in to your Strata account.</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -115,8 +115,8 @@ export default function LoginPage() {
               <span className="mb-1 flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
                 <Info className="h-4 w-4" />
               </span>
-              <CardTitle className="text-base">Demo credentials</CardTitle>
-              <CardDescription>Pre-seeded accounts, ready to explore.</CardDescription>
+              <CardTitle className="text-base">Test accounts</CardTitle>
+              <CardDescription>Explore the customer and administrator experiences with one click.</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4 text-sm">
               <div>
@@ -140,7 +140,7 @@ export default function LoginPage() {
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                Two more customer accounts exist (bob@demo.test, carol@demo.test) — same password.
+                Other customer accounts: bob@demo.test and carol@demo.test — same password.
               </p>
             </CardContent>
           </Card>

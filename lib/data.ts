@@ -1,7 +1,24 @@
 import { prisma } from "@/lib/prisma";
+import type { SidebarUser } from "@/components/authed/sidebar";
 
 export async function getUnreadNotificationCount(userId: string): Promise<number> {
   return prisma.notification.count({ where: { userId, read: false } });
+}
+
+export async function getSidebarUser(userId: string): Promise<SidebarUser> {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    include: { accounts: true },
+  });
+  const account = user.accounts[0];
+  return {
+    name: user.name,
+    email: user.email,
+    accountNumber: account?.accountNumber ?? "—",
+    balance: account ? Number(account.balance) : 0,
+    currency: account?.currency ?? "USD",
+    accountType: "Savings Account",
+  };
 }
 
 export type TransactionDirection = "in" | "out";

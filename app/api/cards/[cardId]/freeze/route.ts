@@ -15,11 +15,15 @@ export async function POST(_request: Request, { params }: { params: { cardId: st
   if (!card || card.account.userId !== session.user.id) {
     return NextResponse.json({ error: "Card not found." }, { status: 404 });
   }
+  if (card.status === "PENDING") {
+    return NextResponse.json({ error: "Card is pending activation." }, { status: 400 });
+  }
 
+  const next = card.status === "FROZEN" ? "ACTIVE" : "FROZEN";
   const updated = await prisma.card.update({
     where: { id: card.id },
-    data: { frozen: !card.frozen },
+    data: { status: next },
   });
 
-  return NextResponse.json({ ok: true, frozen: updated.frozen });
+  return NextResponse.json({ ok: true, status: updated.status });
 }

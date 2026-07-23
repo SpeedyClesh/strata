@@ -4,71 +4,83 @@
 
 @layer base {
   :root {
-    --background: 36 40% 97%;
-    --foreground: 222 47% 11%;
+    /* Warm cream background */
+    --background: 40 33% 97%;
+    --foreground: 150 30% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 150 30% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 150 30% 12%;
 
-    --primary: 222 47% 20%;
-    --primary-foreground: 36 40% 97%;
+    /* Deep forest green primary */
+    --primary: 150 55% 20%;
+    --primary-foreground: 40 33% 97%;
 
-    --secondary: 36 30% 92%;
-    --secondary-foreground: 222 47% 20%;
+    --secondary: 40 30% 92%;
+    --secondary-foreground: 150 55% 20%;
 
-    --muted: 36 20% 93%;
-    --muted-foreground: 222 15% 40%;
+    --muted: 40 25% 93%;
+    --muted-foreground: 150 10% 40%;
 
-    --accent: 158 64% 40%;
-    --accent-foreground: 0 0% 100%;
+    /* Amber gold accent */
+    --accent: 33 74% 63%;
+    --accent-foreground: 150 55% 15%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 36 20% 87%;
-    --input: 36 20% 87%;
-    --ring: 158 64% 40%;
+    --border: 40 20% 88%;
+    --input: 40 20% 88%;
+    --ring: 150 55% 30%;
 
-    --strata-navy: 222 47% 20%;
-    --strata-mint: 158 64% 40%;
+    /* Strata brand tokens */
+    --strata-green: 150 55% 20%;
+    --strata-green-deep: 150 55% 14%;
+    --strata-green-soft: 150 30% 92%;
+    --strata-amber: 33 74% 63%;
+    --strata-amber-deep: 33 74% 45%;
+    --strata-amber-soft: 40 65% 92%;
 
     --radius: 1rem;
   }
 
   .dark {
-    --background: 222 47% 8%;
-    --foreground: 36 20% 95%;
+    --background: 150 45% 8%;
+    --foreground: 40 25% 95%;
 
-    --card: 222 42% 12%;
-    --card-foreground: 36 20% 95%;
+    --card: 150 40% 12%;
+    --card-foreground: 40 25% 95%;
 
-    --popover: 222 42% 12%;
-    --popover-foreground: 36 20% 95%;
+    --popover: 150 40% 12%;
+    --popover-foreground: 40 25% 95%;
 
-    --primary: 158 64% 50%;
-    --primary-foreground: 222 47% 9%;
+    --primary: 33 74% 63%;
+    --primary-foreground: 150 45% 10%;
 
-    --secondary: 222 30% 18%;
-    --secondary-foreground: 36 20% 95%;
+    --secondary: 150 30% 18%;
+    --secondary-foreground: 40 25% 95%;
 
-    --muted: 222 25% 16%;
-    --muted-foreground: 36 10% 65%;
+    --muted: 150 25% 16%;
+    --muted-foreground: 40 10% 65%;
 
-    --accent: 158 64% 50%;
-    --accent-foreground: 222 47% 9%;
+    --accent: 33 74% 63%;
+    --accent-foreground: 150 45% 10%;
 
     --destructive: 0 62% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 222 25% 20%;
-    --input: 222 25% 20%;
-    --ring: 158 64% 50%;
+    --border: 150 25% 20%;
+    --input: 150 25% 20%;
+    --ring: 33 74% 63%;
 
-    --strata-navy: 222 60% 65%;
-    --strata-mint: 158 64% 50%;
+    --strata-green: 150 55% 30%;
+    --strata-green-deep: 150 55% 14%;
+    --strata-green-soft: 150 40% 20%;
+    --strata-amber: 33 74% 63%;
+    --strata-amber-deep: 33 74% 55%;
+    --strata-amber-soft: 33 40% 20%;
   }
 }
 
@@ -80,10 +92,44 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  h1, h2, h3, .heading-serif {
+    font-family: var(--font-playfair), Georgia, serif;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Amber underline used across headings in the reference */
+  .amber-underline {
+    position: relative;
+    padding-bottom: 0.75rem;
+  }
+  .amber-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 4rem;
+    height: 3px;
+    border-radius: 999px;
+    background: hsl(var(--strata-amber));
+  }
+  .amber-underline-center::after {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Diagonal stripe backgrounds used in the reference */
+  .stripes-cream {
+    background-image:
+      linear-gradient(135deg, hsl(var(--strata-green-soft) / 0.4) 0 1px, transparent 1px 24px);
+  }
+  .stripes-green {
+    background-color: hsl(var(--strata-green));
+    background-image:
+      linear-gradient(135deg, hsl(0 0% 100% / 0.05) 0 1px, transparent 1px 24px);
   }
 }

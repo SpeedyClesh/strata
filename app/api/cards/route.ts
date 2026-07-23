@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { CardBrand } from "@prisma/client";
+import { CardBrand, CardStatus } from "@prisma/client";
 
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -16,8 +16,8 @@ export async function POST(request: Request) {
   if (!session?.user) return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
 
   const body = await request.json().catch(() => null);
-  const requestedBrand = String(body?.brand ?? "VISA").toUpperCase();
-  const brand: CardBrand = requestedBrand === "MASTERCARD" ? CardBrand.MASTERCARD : CardBrand.VISA;
+  const requested = String(body?.brand ?? "VISA").toUpperCase();
+  const brand: CardBrand = requested === "MASTERCARD" ? CardBrand.MASTERCARD : requested === "AMEX" ? CardBrand.AMEX : CardBrand.VISA;
 
   const account = await prisma.account.findFirst({ where: { userId: session.user.id } });
   if (!account) return NextResponse.json({ error: "Account not found." }, { status: 404 });
@@ -35,7 +35,8 @@ export async function POST(request: Request) {
       expMonth: now.getMonth() + 1,
       expYear: now.getFullYear() + 3,
       cvv: randomDigits(3),
-      frozen: false,
+      status: brand === CardBrand.AMEX ? CardStatus.PENDING : CardStatus.ACTIVE,
+      balance: 0,
     },
   });
 

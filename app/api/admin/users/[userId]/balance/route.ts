@@ -70,7 +70,7 @@ export async function POST(request: Request, { params }: { params: { userId: str
   await sendEmail({
     to: user.email,
     subject: direction === "credit" ? "Strata: your balance was credited" : "Strata: your balance was debited",
-    text: `Hi ${user.name},\n\nAn adjustment has been applied to your Strata (simulated) account:\n\n${description}\n${direction === "credit" ? "+" : "−"}${rounded.toFixed(2)} ${account.currency}\n\n— Strata (simulated)\n`,
+    text: `Hi ${user.name},\n\nAn adjustment has been applied to your Strata account:\n\n${description}\n${direction === "credit" ? "+" : "−"}${rounded.toFixed(2)} ${account.currency}\n\n— Strata\n`,
   });
 
   return NextResponse.json({ ok: true });

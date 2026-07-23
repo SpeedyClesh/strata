@@ -45,7 +45,7 @@ export async function POST(request: Request, { params }: { params: { threadId: s
     await sendEmail({
       to: thread.user.email,
       subject: `Strata Support replied to "${thread.subject}"`,
-      text: `Hi ${thread.user.name},\n\nSupport just replied to your ticket:\n\n${text}\n\nView the thread: /support/${thread.id}\n\n— Strata (simulated)\n`,
+      text: `Hi ${thread.user.name},\n\nSupport just replied to your ticket:\n\n${text}\n\nView the thread: /support/${thread.id}\n\n— Strata\n`,
     });
   }
 
