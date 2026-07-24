@@ -9,6 +9,7 @@ import { formatCurrency } from "@/lib/utils";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { NewCustomerDialog } from "@/components/admin/new-customer-dialog";
 
 export default async function AdminUsersPage() {
   const session = await getServerSession(authOptions);
@@ -28,9 +29,12 @@ export default async function AdminUsersPage() {
     <div className="flex min-h-screen flex-col bg-muted/30">
       <AdminHeader userName={session.user.name ?? "Admin"} openTickets={openTickets} />
       <main className="container flex-1 py-10">
-        <div className="mb-6">
-          <h1 className="text-3xl font-semibold tracking-tight">Customers</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Click a user to view details, adjust balances, or send a message.</p>
+        <div className="mb-6 flex items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight">Customers</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Click a user to view details, adjust balances, or send a message.</p>
+          </div>
+          <NewCustomerDialog />
         </div>
         <Card>
           <CardHeader>
