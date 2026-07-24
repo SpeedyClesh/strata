@@ -48,6 +48,7 @@ enum TxnStatus {
   PROCESSED
   PENDING
   UNDER_REVIEW
+  REJECTED
 }
 
 enum CryptoAsset {
@@ -78,6 +79,11 @@ enum DepositStatus {
   PROCESSED
 }
 
+enum AccountStatus {
+  ACTIVE
+  FROZEN
+}
+
 model User {
   id           String    @id @default(cuid())
   email        String    @unique
@@ -99,12 +105,15 @@ model User {
 }
 
 model Account {
-  id            String   @id @default(cuid())
+  id            String        @id @default(cuid())
   userId        String
-  accountNumber String   @unique
-  balance       Decimal  @default(0)
-  currency      String   @default("USD")
-  createdAt     DateTime @default(now())
+  accountNumber String        @unique
+  balance       Decimal       @default(0)
+  currency      String        @default("USD")
+  status        AccountStatus @default(ACTIVE)
+  frozenReason  String?
+  frozenAt      DateTime?
+  createdAt     DateTime      @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -115,19 +124,25 @@ model Account {
 }
 
 model Transaction {
-  id            String    @id @default(cuid())
-  fromAccountId String
-  toAccountId   String?
-  amount        Decimal
-  description   String
-  status        TxnStatus @default(PROCESSED)
-  createdAt     DateTime  @default(now())
+  id               String    @id @default(cuid())
+  fromAccountId    String
+  toAccountId      String?
+  amount           Decimal
+  description      String
+  status           TxnStatus @default(PROCESSED)
+  asset            String    @default("USD")
+  counterpartyName String?
+  adminReason      String?
+  reviewedAt       DateTime?
+  reviewedById     String?
+  createdAt        DateTime  @default(now())
 
   fromAccount Account  @relation("FromAccount", fields: [fromAccountId], references: [id], onDelete: Cascade)
   toAccount   Account? @relation("ToAccount", fields: [toAccountId], references: [id], onDelete: SetNull)
 
   @@index([fromAccountId])
   @@index([toAccountId])
+  @@index([status])
 }
 
 model Card {

@@ -8,9 +8,10 @@ import { prisma } from "@/lib/prisma";
 import { formatCurrency, maskAccountNumber } from "@/lib/utils";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BalanceAdjustForm } from "@/components/admin/balance-adjust-form";
 import { NotifyUserForm } from "@/components/admin/notify-user-form";
+import { TransactionEditor, type EditorTxn } from "@/components/admin/transaction-editor";
+import { FreezeAccount } from "@/components/admin/freeze-account";
 
 export default async function AdminUserDetailPage({ params }: { params: { userId: string } }) {
   const session = await getServerSession(authOptions);
@@ -21,9 +22,8 @@ export default async function AdminUserDetailPage({ params }: { params: { userId
     include: {
       accounts: {
         include: {
-          outgoingTransactions: { orderBy: { createdAt: "desc" }, take: 10 },
-          incomingTransactions: { orderBy: { createdAt: "desc" }, take: 10 },
           cards: true,
+          cryptoBalances: true,
         },
       },
       supportThreads: {
@@ -36,14 +36,25 @@ export default async function AdminUserDetailPage({ params }: { params: { userId
   const account = user.accounts[0];
   const openTickets = await prisma.supportThread.count({ where: { status: "OPEN" } });
 
-  const activity = account
-    ? [
-        ...account.outgoingTransactions.map((t) => ({ ...t, direction: "out" as const })),
-        ...account.incomingTransactions.map((t) => ({ ...t, direction: "in" as const })),
-      ]
-        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-        .slice(0, 12)
+  // Full ledger — all transactions where this user's account is either party
+  const rawTxns = account
+    ? await prisma.transaction.findMany({
+        where: { OR: [{ fromAccountId: account.id }, { toAccountId: account.id }] },
+        orderBy: { createdAt: "desc" },
+      })
     : [];
+
+  const editorTxns: EditorTxn[] = rawTxns.map((t) => ({
+    id: t.id,
+    amount: Number(t.amount),
+    description: t.description,
+    status: t.status,
+    asset: t.asset,
+    counterpartyName: t.counterpartyName,
+    adminReason: t.adminReason,
+    direction: t.toAccountId === account?.id ? "credit" : "debit",
+    createdAt: t.createdAt.toISOString(),
+  }));
 
   return (
     <div className="flex min-h-screen flex-col bg-muted/30">
@@ -53,53 +64,47 @@ export default async function AdminUserDetailPage({ params }: { params: { userId
           <ArrowLeft className="h-4 w-4" /> All customers
         </Link>
 
-        <div className="mb-8 flex flex-col gap-1">
-          <h1 className="text-3xl font-semibold tracking-tight">{user.name}</h1>
-          <p className="text-sm text-muted-foreground">{user.email}</p>
+        <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight">{user.name}</h1>
+            <p className="text-sm text-muted-foreground">{user.email}</p>
+          </div>
+          <FreezeAccount
+            userId={user.id}
+            isFrozen={account?.status === "FROZEN"}
+            currentReason={account?.frozenReason ?? null}
+          />
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle>Account</CardTitle>
-              <CardDescription>Simulated primary account and recent activity.</CardDescription>
+              <CardDescription>
+                {account ? `${maskAccountNumber(account.accountNumber)} · ${account.status}` : "No account"}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {account ? (
                 <>
-                  <div className="flex items-baseline justify-between">
+                  <div className="flex flex-wrap items-baseline justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-widest text-muted-foreground">Balance</p>
                       <p className="text-3xl font-semibold">{formatCurrency(Number(account.balance), account.currency)}</p>
                     </div>
-                    <p className="text-sm text-muted-foreground">{maskAccountNumber(account.accountNumber)}</p>
+                    <div className="flex flex-wrap gap-3 text-xs">
+                      {account.cryptoBalances.map((c) => (
+                        <div key={c.id} className="rounded-lg border border-border px-3 py-1.5">
+                          <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{c.asset}</span>
+                          <span className="ml-2 font-medium">{Number(c.amount)}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div>
-                    <p className="mb-2 text-sm font-medium">Recent activity</p>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Description</TableHead>
-                          <TableHead>Date</TableHead>
-                          <TableHead className="text-right">Amount</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {activity.map((t) => (
-                          <TableRow key={t.id}>
-                            <TableCell>{t.description}</TableCell>
-                            <TableCell className="text-muted-foreground">
-                              {t.createdAt.toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
-                            </TableCell>
-                            <TableCell className={"text-right font-medium " + (t.direction === "in" ? "text-accent" : "")}>
-                              {t.direction === "in" ? "+" : "−"}
-                              {formatCurrency(Number(t.amount), account.currency)}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+
+                  {/* Full ledger with editor */}
+                  <TransactionEditor userId={user.id} transactions={editorTxns} />
+
                   <div>
                     <p className="mb-2 text-sm font-medium">Cards ({account.cards.length})</p>
                     <div className="space-y-2 text-sm">
@@ -126,8 +131,8 @@ export default async function AdminUserDetailPage({ params }: { params: { userId
             {account && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Adjust balance</CardTitle>
-                  <CardDescription>Credit or debit this account. Creates a Transaction row.</CardDescription>
+                  <CardTitle className="text-base">Quick adjust (USD)</CardTitle>
+                  <CardDescription>Fast credit/debit. Records a Transaction row.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <BalanceAdjustForm userId={user.id} currency={account.currency} />

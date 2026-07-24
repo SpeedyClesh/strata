@@ -26,6 +26,11 @@ export async function POST(request: Request) {
   if (!senderAccount) {
     return NextResponse.json({ error: "Sender account not found." }, { status: 404 });
   }
+  if (senderAccount.status === "FROZEN") {
+    return NextResponse.json({
+      error: `Your account is frozen${senderAccount.frozenReason ? `: ${senderAccount.frozenReason}` : ""}. Please contact support.`,
+    }, { status: 403 });
+  }
 
   const roundedAmount = Math.round(amount * 100) / 100;
 

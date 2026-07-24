@@ -17,6 +17,11 @@ export async function POST(request: Request) {
 
   const account = await prisma.account.findFirst({ where: { userId: session.user.id } });
   if (!account) return NextResponse.json({ error: "Account not found." }, { status: 404 });
+  if (account.status === "FROZEN") {
+    return NextResponse.json({
+      error: `Your account is frozen${account.frozenReason ? `: ${account.frozenReason}` : ""}. Please contact support.`,
+    }, { status: 403 });
+  }
 
   const systemAccount = await prisma.account.findFirst({
     where: { user: { email: "system@internal.strata.sim" } },

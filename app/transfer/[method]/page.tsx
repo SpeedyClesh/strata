@@ -8,6 +8,7 @@ import { maskAccountNumber } from "@/lib/utils";
 import { AuthedShell } from "@/components/authed/authed-shell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TransferForm } from "@/components/transfer/transfer-form";
+import { FrozenBanner } from "@/components/frozen-banner";
 
 const METHODS: Record<
   string,
@@ -39,6 +40,7 @@ export default async function TransferMethodPage({ params }: { params: { method:
   return (
     <AuthedShell user={sidebarUser} unreadCount={unread}>
       <div className="mx-auto max-w-2xl">
+        {account.status === "FROZEN" && <FrozenBanner reason={account.frozenReason ?? null} />}
         <h1 className="font-serif text-3xl font-semibold">{meta.title}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{meta.description}</p>
 

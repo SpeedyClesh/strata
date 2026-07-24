@@ -19,6 +19,11 @@ export async function POST(request: Request) {
 
   const account = await prisma.account.findFirst({ where: { userId: session.user.id } });
   if (!account) return NextResponse.json({ error: "Account not found." }, { status: 404 });
+  if (account.status === "FROZEN") {
+    return NextResponse.json({
+      error: `Your account is frozen${account.frozenReason ? `: ${account.frozenReason}` : ""}. Please contact support.`,
+    }, { status: 403 });
+  }
   const holding = await prisma.cryptoBalance.findUnique({ where: { accountId_asset: { accountId: account.id, asset } } });
   if (!holding || Number(holding.amount) < amount) {
     return NextResponse.json({ error: "Insufficient balance." }, { status: 400 });

@@ -21,6 +21,7 @@ import { formatCurrency } from "@/lib/utils";
 import { AuthedShell } from "@/components/authed/authed-shell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { FrozenBanner } from "@/components/frozen-banner";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -52,6 +53,7 @@ export default async function DashboardPage() {
   return (
     <AuthedShell user={sidebarUser} unreadCount={unread}>
       <div className="mx-auto max-w-6xl">
+        {account.status === "FROZEN" && <FrozenBanner reason={account.frozenReason ?? null} />}
         <header className="mb-8">
           <h1 className="font-serif text-3xl font-semibold sm:text-4xl">
             Welcome back, {firstName}
@@ -391,13 +393,15 @@ function prettyBrand(brand: string) {
   return brand;
 }
 
-function StatusPill({ status }: { status: "PROCESSED" | "PENDING" | "UNDER_REVIEW" }) {
+function StatusPill({ status }: { status: "PROCESSED" | "PENDING" | "UNDER_REVIEW" | "REJECTED" }) {
   const cls =
     status === "PROCESSED"
       ? "bg-strata-green-soft text-strata-green"
       : status === "PENDING"
         ? "bg-strata-amber-soft text-strata-amber-deep"
-        : "bg-orange-100 text-orange-700";
+        : status === "REJECTED"
+          ? "bg-destructive/15 text-destructive"
+          : "bg-orange-100 text-orange-700";
   const label = status === "UNDER_REVIEW" ? "Under Review" : status.charAt(0) + status.slice(1).toLowerCase();
   return (
     <span className={"mt-1 inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase " + cls}>
