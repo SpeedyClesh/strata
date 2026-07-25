@@ -26,6 +26,7 @@ export function DashboardChrome({
           userEmail={user.email}
           accountType={user.accountType}
           unreadCount={unreadCount}
+          avatarUrl={user.avatarUrl}
           onMenuClick={() => setNavOpen(true)}
         />
         <main className="flex-1 overflow-x-hidden px-4 py-8 lg:px-8">{children}</main>

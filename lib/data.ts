@@ -18,6 +18,7 @@ export async function getSidebarUser(userId: string): Promise<SidebarUser> {
     balance: account ? Number(account.balance) : 0,
     currency: account?.currency ?? "USD",
     accountType: "Savings Account",
+    avatarUrl: user.avatarUrl,
   };
 }
 

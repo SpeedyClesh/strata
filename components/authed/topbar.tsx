@@ -14,12 +14,14 @@ export function Topbar({
   userEmail,
   accountType,
   unreadCount = 0,
+  avatarUrl,
   onMenuClick,
 }: {
   userName: string;
   userEmail: string;
   accountType: string;
   unreadCount?: number;
+  avatarUrl?: string | null;
   onMenuClick?: () => void;
 }) {
   const initials = userName.split(" ").map((n) => n[0]).slice(0, 2).join("");
@@ -70,8 +72,13 @@ export function Topbar({
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <button className="inline-flex items-center gap-2 rounded-full border border-input py-1.5 pl-1.5 pr-3 transition-colors hover:bg-secondary/60">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-strata-green text-primary-foreground">
-                  <span className="text-xs font-semibold">{initials}</span>
+                <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-strata-green text-primary-foreground">
+                  {avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={avatarUrl} alt={userName} className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-xs font-semibold">{initials}</span>
+                  )}
                 </span>
                 <div className="hidden text-left sm:block">
                   <p className="text-xs font-medium leading-tight">{userName}</p>
@@ -89,8 +96,13 @@ export function Topbar({
                 )}
               >
                 <div className="flex items-center gap-3 rounded-xl bg-secondary/50 p-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-strata-green text-primary-foreground">
-                    <span className="text-sm font-semibold">{initials}</span>
+                  <span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-strata-green text-primary-foreground">
+                    {avatarUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={avatarUrl} alt={userName} className="h-full w-full object-cover" />
+                    ) : (
+                      <span className="text-sm font-semibold">{initials}</span>
+                    )}
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold">{userName}</p>

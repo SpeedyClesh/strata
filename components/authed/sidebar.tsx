@@ -53,6 +53,7 @@ export type SidebarUser = {
   balance: number;
   currency: string;
   accountType: string;
+  avatarUrl?: string | null;
 };
 
 export function Sidebar({
@@ -104,8 +105,13 @@ export function Sidebar({
 
         <div className="border-b border-border/60 p-6">
         <div className="flex items-start gap-3">
-          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-strata-green text-primary-foreground">
-            <span className="font-serif text-lg">{user.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}</span>
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-strata-green text-primary-foreground">
+            {user.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={user.avatarUrl} alt={user.name} className="h-full w-full object-cover" />
+            ) : (
+              <span className="font-serif text-lg">{user.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}</span>
+            )}
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold">{user.name}</p>
