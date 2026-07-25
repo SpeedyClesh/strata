@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { Sidebar, type SidebarUser } from "@/components/authed/sidebar";
-import { Topbar } from "@/components/authed/topbar";
+import { DashboardChrome } from "@/components/authed/dashboard-chrome";
+import type { SidebarUser } from "@/components/authed/sidebar";
 
 export function AuthedShell({
   user,
@@ -13,19 +13,8 @@ export function AuthedShell({
   children: ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-secondary/30">
-      <Sidebar user={user} />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar
-          userName={user.name}
-          userEmail={user.email}
-          accountType={user.accountType}
-          unreadCount={unreadCount}
-        />
-        <main className="flex-1 overflow-x-hidden px-4 py-8 lg:px-8">
-          {children}
-        </main>
-      </div>
-    </div>
+    <DashboardChrome user={user} unreadCount={unreadCount}>
+      {children}
+    </DashboardChrome>
   );
 }

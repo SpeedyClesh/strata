@@ -95,6 +95,7 @@ model User {
   country      String?
   city         String?
   dob          DateTime?
+  avatarUrl    String?   @db.Text
   createdAt    DateTime  @default(now())
 
   accounts       Account[]

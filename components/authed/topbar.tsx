@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Bell, ChevronDown, KeyRound, LogOut, Receipt, Settings, ShieldCheck, Headphones } from "lucide-react";
+import { Bell, ChevronDown, KeyRound, LogOut, Receipt, Settings, ShieldCheck, Headphones, Menu } from "lucide-react";
 import { signOut } from "next-auth/react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
@@ -14,23 +14,35 @@ export function Topbar({
   userEmail,
   accountType,
   unreadCount = 0,
+  onMenuClick,
 }: {
   userName: string;
   userEmail: string;
   accountType: string;
   unreadCount?: number;
+  onMenuClick?: () => void;
 }) {
   const initials = userName.split(" ").map((n) => n[0]).slice(0, 2).join("");
 
   return (
     <header className="sticky top-0 z-30 border-b border-border/60 bg-background/95 backdrop-blur">
       <div className="flex h-16 items-center justify-between px-4 lg:px-8">
-        <Link href="/dashboard" className="flex items-center gap-2 lg:hidden">
-          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-strata-green text-primary-foreground">
-            <StrataMark />
-          </span>
-          <span className="font-serif text-lg font-semibold">Strata</span>
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onMenuClick}
+            aria-label="Open menu"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-input transition-colors hover:bg-secondary lg:hidden"
+          >
+            <Menu className="h-4 w-4" />
+          </button>
+          <Link href="/dashboard" className="flex items-center gap-2 lg:hidden">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-strata-green text-primary-foreground">
+              <StrataMark />
+            </span>
+            <span className="font-serif text-lg font-semibold">Strata</span>
+          </Link>
+        </div>
         <div className="hidden lg:block">
           <Link href="/dashboard" className="flex items-center gap-2">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-strata-green text-primary-foreground">

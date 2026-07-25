@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChangePinButton } from "@/components/profile/change-pin";
 import { PasswordButton } from "@/components/profile/change-password";
 import { SignOutAllButton } from "@/components/profile/signout-all";
+import { EditProfileButton } from "@/components/profile/edit-profile";
+import { LocationCard } from "@/components/profile/location-card";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
@@ -23,6 +25,7 @@ export default async function ProfilePage() {
   });
   const account = user.accounts[0];
   const initials = user.name.split(" ").map((n) => n[0]).slice(0, 2).join("");
+  const dobIso = user.dob ? user.dob.toISOString().split("T")[0] : null;
 
   return (
     <AuthedShell user={sidebarUser} unreadCount={unread}>
@@ -31,8 +34,13 @@ export default async function ProfilePage() {
         <Card className="overflow-hidden">
           <CardContent className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-4">
-              <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-strata-green to-strata-green-deep text-primary-foreground">
-                <span className="font-serif text-2xl">{initials}</span>
+              <span className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-strata-green to-strata-green-deep text-primary-foreground">
+                {user.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={user.avatarUrl} alt={user.name} className="h-full w-full object-cover" />
+                ) : (
+                  <span className="font-serif text-2xl">{initials}</span>
+                )}
               </span>
               <div>
                 <div className="flex items-center gap-2">
@@ -48,6 +56,16 @@ export default async function ProfilePage() {
               </div>
             </div>
             <div className="flex flex-col gap-2 sm:items-end">
+              <EditProfileButton
+                profile={{
+                  name: user.name,
+                  phone: user.phone,
+                  country: user.country,
+                  city: user.city,
+                  dob: dobIso,
+                  avatarUrl: user.avatarUrl,
+                }}
+              />
               <ChangePinButton />
               <PasswordButton />
             </div>
@@ -74,6 +92,8 @@ export default async function ProfilePage() {
             </div>
           </CardContent>
         </Card>
+
+        <LocationCard />
 
         <Card className="mt-6" id="security">
           <CardHeader>

@@ -20,6 +20,7 @@ import {
   LogOut,
   PiggyBank,
   Plus,
+  X,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -54,12 +55,54 @@ export type SidebarUser = {
   accountType: string;
 };
 
-export function Sidebar({ user }: { user: SidebarUser }) {
+export function Sidebar({
+  user,
+  open = false,
+  onClose,
+}: {
+  user: SidebarUser;
+  open?: boolean;
+  onClose?: () => void;
+}) {
   const pathname = usePathname();
 
+  // Auto-close the mobile drawer whenever the user navigates to a new page.
+  React.useEffect(() => {
+    onClose?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
   return (
-    <aside className="hidden w-72 shrink-0 border-r border-border/60 bg-card lg:flex lg:flex-col">
-      <div className="border-b border-border/60 p-6">
+    <>
+      {/* Mobile backdrop — only relevant below the lg breakpoint */}
+      {open && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+          aria-hidden="true"
+          onClick={onClose}
+        />
+      )}
+
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 flex w-72 shrink-0 flex-col border-r border-border/60 bg-card transition-transform duration-200 ease-out",
+          "lg:static lg:z-auto lg:flex lg:translate-x-0",
+          open ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
+        <div className="flex items-center justify-between border-b border-border/60 p-6 lg:hidden">
+          <span className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Menu</span>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close menu"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="border-b border-border/60 p-6">
         <div className="flex items-start gap-3">
           <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-strata-green text-primary-foreground">
             <span className="font-serif text-lg">{user.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}</span>
@@ -158,5 +201,6 @@ export function Sidebar({ user }: { user: SidebarUser }) {
         </ul>
       </nav>
     </aside>
+    </>
   );
 }
