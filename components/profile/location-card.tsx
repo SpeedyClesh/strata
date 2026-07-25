@@ -108,7 +108,7 @@ export function LocationCard() {
         )}
 
         <p className="mt-3 text-[11px] text-muted-foreground">
-          Based on the public IP address of the device you're currently using. This can vary if you're on a VPN or mobile network.
+          Based on the public IP address of the device you&apos;re currently using. This can vary if you&apos;re on a VPN or mobile network.
         </p>
       </CardContent>
     </Card>
