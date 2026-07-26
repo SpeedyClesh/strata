@@ -67,7 +67,7 @@ export default function SignupPage() {
               </span>
               <h1 className="font-serif text-xl font-semibold">Application received</h1>
               <p className="text-sm text-muted-foreground">
-                Thanks, {name.split(" ")[0]}. We've sent a confirmation to <strong>{email}</strong>. Our team will
+                Thanks, {name.split(" ")[0]}. We&apos;ve sent a confirmation to <strong>{email}</strong>. Our team will
                 review your application and email you once your account is approved — usually within one business
                 day.
               </p>
@@ -89,7 +89,7 @@ export default function SignupPage() {
           <CardHeader>
             <CardTitle>Open a Strata account</CardTitle>
             <CardDescription>
-              Just the basics for now — you can fill in the rest of your profile after you're approved.
+              Just the basics for now — you can fill in the rest of your profile after you&apos;re approved.
             </CardDescription>
           </CardHeader>
           <CardContent>
