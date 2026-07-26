@@ -10,6 +10,7 @@ import {
   LoanStatus,
   DepositStatus,
   TxnStatus,
+  AccountType,
 } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
@@ -121,9 +122,9 @@ async function main() {
   });
 
   const demoUsers = [
-    { email: "alice@demo.test", name: "Alice Nguyen", balance: 12450.75, seed: 1, phone: "+1 202 555 0142", country: "United States", city: "Charlottesville, VA" },
-    { email: "bob@demo.test", name: "Bob Ramirez", balance: 3208.10, seed: 2, phone: "+1 415 555 0187", country: "United States", city: "San Francisco, CA" },
-    { email: "carol@demo.test", name: "Carol Osei", balance: 47900.00, seed: 3, phone: "+44 20 7946 0958", country: "United Kingdom", city: "London" },
+    { email: "alice@demo.test", name: "Alice Nguyen", balance: 12450.75, seed: 1, phone: "+1 202 555 0142", country: "United States", city: "Charlottesville, VA", accountType: AccountType.SAVINGS },
+    { email: "bob@demo.test", name: "Bob Ramirez", balance: 3208.10, seed: 2, phone: "+1 415 555 0187", country: "United States", city: "San Francisco, CA", accountType: AccountType.CHECKING },
+    { email: "carol@demo.test", name: "Carol Osei", balance: 47900.00, seed: 3, phone: "+44 20 7946 0958", country: "United Kingdom", city: "London", accountType: AccountType.TRADITIONAL },
   ];
 
   const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 10);
@@ -147,6 +148,7 @@ async function main() {
       data: {
         userId: user.id,
         accountNumber: fakeAccountNumber(demo.seed),
+        type: demo.accountType,
         balance: demo.balance,
         currency: "USD",
       },

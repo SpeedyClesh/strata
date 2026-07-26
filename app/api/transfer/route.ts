@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { verifyPin } from "@/lib/pin";
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
@@ -11,6 +12,12 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json().catch(() => null);
+
+  const pinCheck = await verifyPin(session.user.id, body?.pin);
+  if (!pinCheck.ok) {
+    return NextResponse.json({ error: pinCheck.error }, { status: pinCheck.status });
+  }
+
   const recipientAccountNumber = typeof body?.recipientAccountNumber === "string" ? body.recipientAccountNumber.trim() : "";
   const description = typeof body?.description === "string" ? body.description.trim() : "";
   const amount = Number(body?.amount);

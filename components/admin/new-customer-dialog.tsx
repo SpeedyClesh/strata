@@ -23,6 +23,7 @@ export function NewCustomerDialog() {
     phone: "",
     country: "",
     city: "",
+    accountType: "SAVINGS",
     issueCard: true,
   });
 
@@ -73,7 +74,7 @@ export function NewCustomerDialog() {
       description: `${form.name} (${form.email}) — password: ${form.password}`,
     });
     setOpen(false);
-    setForm({ name: "", email: "", password: "", balance: "0", phone: "", country: "", city: "", issueCard: true });
+    setForm({ name: "", email: "", password: "", balance: "0", phone: "", country: "", city: "", accountType: "SAVINGS", issueCard: true });
     router.refresh();
   }
 
@@ -130,9 +131,25 @@ export function NewCustomerDialog() {
                   <Input id="country" value={form.country} onChange={(e) => update("country", e.target.value)} />
                 </div>
               </div>
-              <div>
-                <Label htmlFor="city">City / address</Label>
-                <Input id="city" value={form.city} onChange={(e) => update("city", e.target.value)} />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <Label htmlFor="city">City / address</Label>
+                  <Input id="city" value={form.city} onChange={(e) => update("city", e.target.value)} />
+                </div>
+                <div>
+                  <Label htmlFor="accountType">Account type</Label>
+                  <select
+                    id="accountType"
+                    value={form.accountType}
+                    onChange={(e) => update("accountType", e.target.value)}
+                    className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  >
+                    <option value="SAVINGS">Savings</option>
+                    <option value="CHECKING">Checking</option>
+                    <option value="TRADITIONAL">Traditional</option>
+                  </select>
+                  <p className="mt-1 text-xs text-muted-foreground">Fixed at creation — matches what the customer chose at signup.</p>
+                </div>
               </div>
               <label className="inline-flex items-center gap-2 text-sm">
                 <input

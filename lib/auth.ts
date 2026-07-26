@@ -24,6 +24,13 @@ export const authOptions: NextAuthOptions = {
         const isValid = await bcrypt.compare(credentials.password, user.passwordHash);
         if (!isValid) return null;
 
+        if (user.status === "PENDING") {
+          throw new Error("PENDING_APPROVAL");
+        }
+        if (user.status === "REJECTED") {
+          throw new Error("ACCOUNT_REJECTED");
+        }
+
         return {
           id: user.id,
           email: user.email,

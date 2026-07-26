@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
-import { LayoutDashboard, LogOut, LifeBuoy, ShieldCheck, Users, Inbox, Menu, X } from "lucide-react";
+import { LayoutDashboard, LogOut, LifeBuoy, ShieldCheck, Users, Inbox, Menu, X, UserCheck } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/admin/signups", label: "Pending Signups", icon: UserCheck },
   { href: "/admin/transactions", label: "Transactions", icon: Inbox },
   { href: "/admin/support", label: "Support inbox", icon: LifeBuoy },
 ];

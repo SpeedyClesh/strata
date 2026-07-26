@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getSession, signIn } from "next-auth/react";
 import { AlertCircle, Info } from "lucide-react";
@@ -35,7 +36,13 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      setError("Invalid email or password. Please try again.");
+      if (result.error === "PENDING_APPROVAL") {
+        setError("Your account is still awaiting admin approval. We'll email you once it's reviewed.");
+      } else if (result.error === "ACCOUNT_REJECTED") {
+        setError("This account application wasn't approved. Contact support for more details.");
+      } else {
+        setError("Invalid email or password. Please try again.");
+      }
       setLoading(false);
       return;
     }
@@ -84,7 +91,12 @@ export default function LoginPage() {
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="password">Password</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">Password</Label>
+                    <Link href="/forgot-password" className="text-xs font-medium text-strata-green hover:underline">
+                      Forgot password?
+                    </Link>
+                  </div>
                   <Input
                     id="password"
                     type="password"
@@ -107,6 +119,12 @@ export default function LoginPage() {
                   {loading ? "Signing in…" : "Sign in"}
                 </Button>
               </form>
+              <p className="mt-4 text-center text-sm text-muted-foreground">
+                New to Strata?{" "}
+                <Link href="/signup" className="font-medium text-strata-green hover:underline">
+                  Open an account
+                </Link>
+              </p>
             </CardContent>
           </Card>
 

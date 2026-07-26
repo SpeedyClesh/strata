@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { formatCurrency, maskAccountNumber } from "@/lib/utils";
+import { formatCurrency, maskAccountNumber, formatAccountType } from "@/lib/utils";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BalanceAdjustForm } from "@/components/admin/balance-adjust-form";
@@ -81,7 +81,7 @@ export default async function AdminUserDetailPage({ params }: { params: { userId
             <CardHeader>
               <CardTitle>Account</CardTitle>
               <CardDescription>
-                {account ? `${maskAccountNumber(account.accountNumber)} · ${account.status}` : "No account"}
+                {account ? `${maskAccountNumber(account.accountNumber)} · ${formatAccountType(account.type)} · ${account.status}` : "No account"}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">

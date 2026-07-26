@@ -4,6 +4,7 @@ import { CryptoAsset } from "@prisma/client";
 
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { verifyPin } from "@/lib/pin";
 
 const VALID: CryptoAsset[] = ["BTC", "ETH", "USDT"];
 
@@ -12,6 +13,12 @@ export async function POST(request: Request) {
   if (!session?.user) return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
 
   const body = await request.json().catch(() => null);
+
+  const pinCheck = await verifyPin(session.user.id, body?.pin);
+  if (!pinCheck.ok) {
+    return NextResponse.json({ error: pinCheck.error }, { status: pinCheck.status });
+  }
+
   const from = String(body?.from ?? "").toUpperCase() as CryptoAsset;
   const to = String(body?.to ?? "").toUpperCase() as CryptoAsset;
   const amount = Number(body?.amount);

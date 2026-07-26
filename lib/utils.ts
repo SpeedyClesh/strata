@@ -12,3 +12,15 @@ export function formatCurrency(amount: number, currency = "USD") {
 export function maskAccountNumber(accountNumber: string) {
   return `•••• •••• ${accountNumber.slice(-4)}`;
 }
+
+export function formatAccountType(type: string) {
+  switch (type) {
+    case "CHECKING":
+      return "Checking Account";
+    case "TRADITIONAL":
+      return "Traditional Account";
+    case "SAVINGS":
+    default:
+      return "Savings Account";
+  }
+}
